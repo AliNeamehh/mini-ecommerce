@@ -1,6 +1,5 @@
 package com.example.mini_ecommerce_api.model;
 
-
 import com.example.mini_ecommerce_api.model.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,6 +16,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
+@Table(name = "users")
 public class User {
 
     @Id
@@ -25,7 +25,6 @@ public class User {
     private String name;
     private String email;
     private String password;
-
 
     @Enumerated(EnumType.STRING)
     private UserRole role;

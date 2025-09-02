@@ -11,6 +11,7 @@ import java.time.Instant;
 @Entity
 @Data
 @EntityListeners(AuditingEntityListener.class)
+@Table(name = "products")
 public class Product {
 
     @Id
