@@ -4,6 +4,8 @@ import com.example.mini_ecommerce_api.dto.CreateProductRequestDto;
 import com.example.mini_ecommerce_api.dto.ProductResponseDto;
 import com.example.mini_ecommerce_api.mapper.ProductMapper;
 import com.example.mini_ecommerce_api.repository.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,6 +19,14 @@ public class ProductService implements IProductService {
         this.productRepository = productRepo;
         this.mapper = mapper;
     }
+
+
+    public Page<ProductResponseDto > getAllProducts(Pageable pageable) {
+
+        return productRepository.findAll(pageable).map(mapper::toDto);
+    }
+
+
 
     @Override
     public ProductResponseDto createProduct(CreateProductRequestDto dto) {
