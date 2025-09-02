@@ -8,6 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class ProductService implements IProductService {
 
@@ -33,6 +36,11 @@ public class ProductService implements IProductService {
         return mapper.toDto(productRepository.save(mapper.toEntity(dto)));
     }
 
+    @Override
+    public List<ProductResponseDto> getLowStockProducts(int threshold) {
+
+        return productRepository.findByStockQuantityLessThan(threshold).stream().map(mapper::toDto).collect(Collectors.toList());
+    }
 
 
 }

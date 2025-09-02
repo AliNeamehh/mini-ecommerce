@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/products")
 @Tag(name = "Product Management", description = "APIs for managing products")
@@ -38,6 +40,13 @@ public class ProductController {
     public ResponseEntity<ProductResponseDto> createProduct( @Valid  @RequestBody CreateProductRequestDto dto) {
         ProductResponseDto productResponseDto = productService.createProduct(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(productResponseDto);
+    }
+
+
+    @GetMapping("/low-stock")
+    @Operation(summary = "Get products with stock below a certain threshold")
+    public ResponseEntity<List<ProductResponseDto>> getLowStockProducts(@RequestParam(defaultValue = "5") int threshold) {
+        return ResponseEntity.ok(productService.getLowStockProducts(threshold));
     }
 
 
