@@ -2,6 +2,7 @@ package com.example.mini_ecommerce_api.service;
 
 
 import com.example.mini_ecommerce_api.dto.CreateOrderRequest;
+import com.example.mini_ecommerce_api.dto.OrderAdminRowDto;
 import com.example.mini_ecommerce_api.dto.OrderDto;
 import com.example.mini_ecommerce_api.exception.BadRequestException;
 import com.example.mini_ecommerce_api.exception.NotFoundException;
@@ -82,6 +83,19 @@ public class OrderService implements IOrderService {
 
         return orderMapper.toDto(savedOrder);
 
+    }
+
+    @Override
+    public List<OrderAdminRowDto> listAllOrders() {
+        return orderRepo.findAll().stream()
+                .map(order -> new OrderAdminRowDto(
+                        order.getId(),
+                        order.getUser().getName(),
+                        order.getTotalAmount(),
+                        order.getStatus().name(),
+                        order.getCreatedAt()
+                ))
+                .toList();
     }
 
 }
