@@ -1,5 +1,6 @@
 package com.example.mini_ecommerce_api.service;
 
+import com.example.mini_ecommerce_api.config.CustomUserDetails;
 import com.example.mini_ecommerce_api.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -36,7 +37,9 @@ public class JWTService {
         claims.put("roles", authorities.stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList()));
-
+        if (userDetails instanceof CustomUserDetails) {
+            claims.put("id", ((CustomUserDetails) userDetails).getId());
+        }
         return Jwts.builder()
                 .claims()
                 .add(claims)
