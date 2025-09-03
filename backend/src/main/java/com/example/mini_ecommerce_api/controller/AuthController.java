@@ -4,6 +4,7 @@ package com.example.mini_ecommerce_api.controller;
 import com.example.mini_ecommerce_api.dto.LoginRequest;
 import com.example.mini_ecommerce_api.dto.RegisterRequest;
 import com.example.mini_ecommerce_api.service.IAuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,14 +26,14 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterRequest dto){
+    public ResponseEntity<String> register(@RequestBody @Valid RegisterRequest dto){
         authService.register(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body("register successFully");
     }
 
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest request){
+    public ResponseEntity<String> login(@RequestBody @Valid LoginRequest request){
 
         return ResponseEntity.ok(authService.login(request));
 
