@@ -2,15 +2,19 @@ package com.example.mini_ecommerce_api.controller;
 
 
 import com.example.mini_ecommerce_api.dto.CreateOrderRequest;
+import com.example.mini_ecommerce_api.dto.OrderAdminRowDto;
 import com.example.mini_ecommerce_api.dto.OrderDto;
 import com.example.mini_ecommerce_api.service.IOrderService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/orders")
@@ -34,7 +38,11 @@ public class OrderController {
 
 
 
-
-
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Get all orders")
+    public ResponseEntity<List<OrderAdminRowDto>> getAllOrders() {
+        return ResponseEntity.ok(orderService.listAllOrders());
+    }
 
 }

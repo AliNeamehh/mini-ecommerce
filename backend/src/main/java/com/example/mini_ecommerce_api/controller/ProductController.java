@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,6 +37,7 @@ public class ProductController {
 
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Create a new product")
     public ResponseEntity<ProductResponseDto> createProduct( @Valid  @RequestBody CreateProductRequestDto dto) {
         ProductResponseDto productResponseDto = productService.createProduct(dto);
@@ -44,6 +46,7 @@ public class ProductController {
 
 
     @GetMapping("/low-stock")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Get products with stock below a certain threshold")
     public ResponseEntity<List<ProductResponseDto>> getLowStockProducts(@RequestParam(defaultValue = "5") int threshold) {
         return ResponseEntity.ok(productService.getLowStockProducts(threshold));
