@@ -31,7 +31,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             User user = optionalUser.get();
 
             Collection<? extends GrantedAuthority> authorities =
-                    Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name()));
+                    Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
 
             return new CustomUserDetails(user, authorities);
         }
