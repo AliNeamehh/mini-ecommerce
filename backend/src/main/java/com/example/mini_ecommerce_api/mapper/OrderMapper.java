@@ -8,7 +8,10 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", uses = OrderItemMapper.class)
 public interface OrderMapper {
-    @Mapping(target = "status", expression = "java(order.getStatus().name())")
+    @Mapping(
+            target = "status",
+            expression = "java(order.getStatus() == null ? null : order.getStatus().name())"
+    )
     OrderDto toDto(Order order);
 
 

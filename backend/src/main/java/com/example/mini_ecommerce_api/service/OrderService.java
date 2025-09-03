@@ -1,5 +1,5 @@
+// src/main/java/com/example/mini_ecommerce_api/service/OrderService.java
 package com.example.mini_ecommerce_api.service;
-
 
 import com.example.mini_ecommerce_api.dto.CreateOrderRequest;
 import com.example.mini_ecommerce_api.dto.OrderAdminRowDto;
@@ -10,6 +10,7 @@ import com.example.mini_ecommerce_api.mapper.OrderMapper;
 import com.example.mini_ecommerce_api.model.Order;
 import com.example.mini_ecommerce_api.model.OrderItem;
 import com.example.mini_ecommerce_api.model.User;
+import com.example.mini_ecommerce_api.model.enums.OrderStatus;
 import com.example.mini_ecommerce_api.repository.OrderItemRepository;
 import com.example.mini_ecommerce_api.repository.OrderRepository;
 import com.example.mini_ecommerce_api.repository.ProductRepository;
@@ -22,7 +23,6 @@ import java.util.List;
 
 @Service
 public class OrderService implements IOrderService {
-
 
     private final UserRepository userRepo;
     private final ProductRepository productRepo;
@@ -47,14 +47,12 @@ public class OrderService implements IOrderService {
 
         User user = userRepo.findById(userId).orElseThrow(() -> new NotFoundException("User not found with this Id: " + userId));
 
-
         List<OrderItem> items = new ArrayList<>();
 
         for (var line : req.getOrderLines()) {
             var product = productRepo.findByIdForUpdate(line.getProductId()).orElseThrow(() -> new NotFoundException("Product not found with this Id: " + line.getProductId()));
             if (product.getStockQuantity() < line.getQuantity()) {
                 throw new BadRequestException("Product with id " + product.getId() + " has only " + product.getStockQuantity() + " items in stock.");
-
             }
 
             product.setStockQuantity(product.getStockQuantity() - line.getQuantity());
@@ -66,23 +64,24 @@ public class OrderService implements IOrderService {
             orderItem.setPrice(product.getPrice());
 
             items.add(orderItem);
-
-
         }
+
 
         Order order = new Order();
         order.setUser(user);
-        order.setItems(items);
+        order.setStatus(OrderStatus.CREATED);
         order.setTotalAmount(items.stream().mapToDouble(item -> item.getPrice() * item.getQuantity()).sum());
-
-
         Order savedOrder = orderRepo.save(order);
-        items.forEach(item -> item.setOrder(savedOrder));
+
+
+        for (OrderItem item : items) {
+            item.setOrder(savedOrder);
+        }
         orderItemRepo.saveAll(items);
 
 
+        savedOrder.setItems(items);
         return orderMapper.toDto(savedOrder);
-
     }
 
     @Override
@@ -97,5 +96,4 @@ public class OrderService implements IOrderService {
                 ))
                 .toList();
     }
-
 }

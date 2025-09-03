@@ -38,7 +38,7 @@ public class Order {
     private List<OrderItem> items = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    private OrderStatus status;
+    private OrderStatus status=OrderStatus.CREATED;
 
     private double totalAmount;
 
