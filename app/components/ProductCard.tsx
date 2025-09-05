@@ -1,68 +1,87 @@
-import React from 'react'
-import { Product } from '../lib/types'
-import { useCart } from '../store/cart'
-import { isAuthed } from '../lib/auth'
-import { useRouter } from 'next/navigation'
+import React from "react";
+import { Product } from "../lib/types";
+import { useCart } from "../store/cart";
+import { isAuthed } from "../lib/auth";
+import { useRouter } from "next/navigation";
 
 export default function ProductCard({ product }: { product: Product }) {
-  const add = useCart((s) => s.add)
-  const router = useRouter()
-  const out = product.stockQuantity <= 0
+  const add = useCart((s) => s.add);
+  const router = useRouter();
+  const out = (product.stockQuantity ?? 0) <= 0;
+  const oldPrice = (product as any).oldPrice ?? (product as any).compareAtPrice;
 
   return (
-  <div className="group w-full max-w-[520px] h-[160px] flex flex-row bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm transform transition duration-150 hover:scale-105">
-  <div className="relative w-40 bg-gray-50 flex items-center justify-center overflow-hidden">
+    <article
+      className="  h-full
+        w-full max-w-[320px]
+        bg-white rounded-2xl shadow-md hover:shadow-lg
+        transition-all overflow-hidden
+        flex flex-col
+      "
+    >
+      {/* Image panel */}
+      <div className="relative bg-[#0f1b2d] aspect-[4/3] grid place-items-center">
         {product.imageUrl ? (
           <img
             src={product.imageUrl}
             alt={product.name}
-            className="w-full h-full object-contain p-3"
+            className="w-[85%] h-[85%] object-contain"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-300">No image</div>
+          <div className="text-white/60 text-sm">No image</div>
         )}
 
-        
-        <div className="absolute top-3 right-3">
-          {out ? (
-            <span className="inline-flex items-center px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-semibold">Out of Stock</span>
-          ) : (
-            <span className="inline-flex items-center px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-semibold">In Stock</span>
-          )}
-        </div>
+        {/* Stock badge */}
+        <span
+          className={`absolute left-3 top-3 px-2.5 py-1 rounded-full text-[11px] font-semibold
+          ${out ? "bg-red-100 text-red-700" : "bg-emerald-100 text-emerald-700"}`}
+        >
+          {out ? "Out of Stock" : "In Stock"}
+        </span>
       </div>
 
-  <div className="p-4 flex-1 flex flex-col justify-between">
-        <div>
-          <h3 className="text-xs font-semibold text-gray-900">{product.name}</h3>
+      {/* Body */}
+      <div className="p-4 flex flex-col">
+        <h3 className="text-sm font-semibold text-slate-900 leading-snug">
+          {product.name}
+        </h3>
 
-          <div className="mt-1">
-            <div className="text-lg font-bold text-gray-900">${product.price.toFixed(2)}</div>
-            <div className="text-xs text-gray-500 mt-0.5">{product.description ? product.description.slice(0, 60) : ''}</div>
-          </div>
+        <div className="mt-2 flex items-baseline gap-2">
+          <span className="text-lg font-bold text-slate-900">
+            ${product.price.toFixed(2)}
+          </span>
+          {oldPrice ? (
+            <span className="text-xs text-slate-400 line-through">
+              ${Number(oldPrice).toFixed(2)}
+            </span>
+          ) : null}
         </div>
 
-        <div className="mt-2">
-          <button
-            onClick={() => {
-              if (!isAuthed()) {
-                router.push('/login')
-                return
-              }
-              add(product)
-            }}
-            disabled={out}
-            data-testid={`add-to-cart-${product.id}`}
-            className={`inline-flex items-center justify-center px-2 py-1 rounded-full text-xs font-semibold tracking-wide transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-              out
-                ? 'bg-gray-200 text-gray-500 cursor-not-allowed border border-gray-200'
-                : 'bg-black text-white hover:bg-neutral-800'
-            }`}
-          >
-            Add
-          </button>
-        </div>
+        {product.description ? (
+          <p className="mt-1 text-xs text-slate-500">
+            {product.description.slice(0, 70)}
+            {product.description.length > 70 ? "…" : ""}
+          </p>
+        ) : null}
+
+        <button
+          onClick={() => {
+            if (!isAuthed()) {
+              router.push("/login");
+              return;
+            }
+            add(product);
+          }}
+          disabled={out}
+          data-testid={`add-to-cart-${product.id}`}
+          className={`mt-3 h-11 w-full rounded-full font-bold transition-colors
+            focus:outline-none focus:ring-2 focus:ring-offset-2
+            ${out ? "bg-slate-300 text-white cursor-not-allowed"
+                  : "bg-[#0f1b2d] text-white hover:bg-[#0c1523]"}`}
+        >
+          {out ? "OUT OF STOCK" : "ADD TO CART"}
+        </button>
       </div>
-    </div>
-  )
+    </article>
+  );
 }
