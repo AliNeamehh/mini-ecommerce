@@ -49,7 +49,13 @@ export default function Navbar() {
           <nav className="flex items-center gap-4 text-gray-700">
             <Link href="/">Shop</Link>
             <Link href="/cart" className="relative">Cart <span className="ml-2 inline-block bg-blue-600 text-white px-2 rounded-full text-sm">{mounted ? count : ''}</span></Link>
-            <Link href="/admin" className="">Admin</Link>
+            {role === 'ADMIN' && (
+              <>
+                <Link href="/admin/orders">Orders</Link>
+                <Link href="/admin/products">Products</Link>
+                <Link href="/admin/low-stock">Low stock</Link>
+              </>
+            )}
           </nav>
         </div>
 

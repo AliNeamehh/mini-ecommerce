@@ -16,7 +16,7 @@ instance.interceptors.request.use((cfg) => {
   let token: string | undefined
   try {
     if (typeof window !== 'undefined') {
-      token = Cookies.get('jwt')
+  token = Cookies.get('jwt') || (window.sessionStorage ? window.sessionStorage.getItem('jwt') || undefined : undefined)
     }
   } catch (e) {
     token = undefined
