@@ -1,6 +1,7 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import { Product, CreateOrderRequest, LoginRequest, RegisterRequest, Order, AdminOrderRow } from './types'
+import { setToken } from './auth'
 
 const baseURL = process.env.NEXT_PUBLIC_API_BASE || '/api'
 
@@ -22,6 +23,9 @@ instance.interceptors.request.use((cfg) => {
   }
 
   if (token) {
+    // debug: show what token we're attaching (safe for dev only)
+    // eslint-disable-next-line no-console
+    console.debug('[api] attaching token to request:', token ? `${token.substring(0, 8)}...` : token)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const h = (cfg.headers as any) || {}
     h['Authorization'] = `Bearer ${token}`
@@ -55,7 +59,22 @@ export async function getProducts(): Promise<Product[]> {
 export async function login(req: LoginRequest): Promise<{ token: string }> {
   try {
     const r = await instance.post('/auth/login', req)
-    return r.data
+  // debug: log response for troubleshooting (dev only)
+  // eslint-disable-next-line no-console
+  console.debug('[api] login response status=', r.status, 'data=', r.data)
+  // Backend may return a plain string token (not an object). Normalize
+  // to an object shape { token } so callers can safely call r.token.
+  const token = typeof r.data === 'string' ? r.data : (r.data && r.data.token) ? r.data.token : undefined
+  // eslint-disable-next-line no-console
+  console.debug('[api] extracted token=', token ? `${token.substring(0,8)}...` : token)
+  // Validate token looks like a JWT (three base64 parts separated by dots)
+  if (!token || typeof token !== 'string' || token.split('.').length !== 3) {
+    // eslint-disable-next-line no-console
+    console.error('[api] login returned invalid token:', r.data)
+    throw new Error('Invalid token received from server')
+  }
+  setToken(token)
+  return { token }
   } catch (e) {
     throw friendlyError(e)
   }

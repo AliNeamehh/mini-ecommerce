@@ -28,7 +28,7 @@ export default function Page() {
     <div>
       <h1 className="text-2xl font-bold">Shop</h1>
       <p className="text-sm text-gray-600">Showing {products.length} results</p>
-      <div className="mt-6 grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+  <div className="mt-6 grid w-full gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {loading ? (
           <div className="col-span-full text-center py-10 text-gray-500">Loading products...</div>
         ) : (
