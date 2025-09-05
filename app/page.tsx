@@ -71,7 +71,7 @@ export default function Page() {
       <h1 className="text-2xl font-bold">Shop</h1>
       <p className="text-sm text-gray-600">Page {page + 1} of {totalPages} — Showing {products.length} results</p>
 
-      <div ref={gridRef} className="mt-6 w-full grid gap-4 justify-center" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))' }}>
+      <div ref={gridRef} className="mt-6 w-full grid gap-6 justify-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {loading ? (
           <div className="w-full text-center py-10 text-gray-500">Loading products...</div>
         ) : (

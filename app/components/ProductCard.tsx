@@ -10,14 +10,13 @@ export default function ProductCard({ product }: { product: Product }) {
   const out = product.stockQuantity <= 0
 
   return (
-  <div className="group w-[250px] h-[340px] flex flex-col bg-white rounded-lg overflow-hidden border border-gray-100 transform transition duration-150 hover:scale-105 hover:shadow-md">
-  <div className="relative h-40 bg-gray-50 flex items-center justify-center overflow-hidden">
+  <div className="group w-full max-w-[520px] h-[160px] flex flex-row bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm transform transition duration-150 hover:scale-105">
+  <div className="relative w-40 bg-gray-50 flex items-center justify-center overflow-hidden">
         {product.imageUrl ? (
           <img
             src={product.imageUrl}
             alt={product.name}
-            className="w-full h-full object-contain p-2"
-            style={{ maxHeight: '100%' }}
+            className="w-full h-full object-contain p-3"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-300">No image</div>
@@ -33,7 +32,7 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
       </div>
 
-  <div className="p-1 flex-1 flex flex-col justify-between">
+  <div className="p-4 flex-1 flex flex-col justify-between">
         <div>
           <h3 className="text-xs font-semibold text-gray-900">{product.name}</h3>
 
