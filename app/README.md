@@ -1,16 +1,61 @@
-Mini e-commerce frontend
+# Mini E‑commerce — Quick start
 
-This folder contains a minimal Next.js (app router) + TypeScript + Tailwind scaffold wired to the existing backend.
+A minimal README for people who clone this repo and want to run the app locally and sign in as the seeded admin user.
 
-How to run:
+Prerequisites
+- Node.js 18+ and npm (for the frontend)
+- Java 17+ and Maven (or use the included Maven wrapper) to run the backend
+ - PostgreSQL database (backend uses PostgreSQL for persistence)
 
-1. cd app
-2. npm install
-3. npm run dev
+Steps
 
-Environment:
-- NEXT_PUBLIC_API_BASE (optional) - base URL for backend (default http://localhost:8080)
+1. Clone the repository:
 
-Notes:
-- The frontend uses cookies for JWT (cookie name 'jwt').
-- Many components use simple alert() for toasts; replace with a better UI as needed.
+```powershell
+git clone <repo-url>
+cd mini-ecommerce
+```
+
+2. Start the backend (from the repo root). On Windows with the included wrapper:
+
+```powershell
+cd backend
+.\mvnw.cmd spring-boot:run
+```
+
+Or build and run the JAR:
+
+```powershell
+cd backend
+.\mvnw.cmd package
+java -jar target\mini-ecommerce-api-0.0.1-SNAPSHOT.jar
+```
+
+3. Start the frontend:
+
+```powershell
+cd ..\app
+npm install
+npm run dev
+```
+
+Open http://localhost:3000 in your browser.
+
+Admin login (seeded)
+- Email: admin@gmail.com
+- Password: admin
+
+Note: you mentioned you created a backend bean that seeds this admin user — make sure the backend is running so the seeded user is available. If the backend is using an in-memory database or the seed runs only once, re-run the backend build/start if the user is missing.
+
+Environment
+- NEXT_PUBLIC_API_BASE — optional, set if your backend is not at http://localhost:8080 (frontend defaults to a proxy to the backend).
+
+Backend datasource
+- The backend uses PostgreSQL. Ensure a Postgres server is running and configure the datasource before starting the backend. You can set the connection in `backend/src/main/resources/application.properties` or via environment variables (for example: `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`).
+
+Troubleshooting
+- If login fails, verify the backend logs show the seeded admin creation and that the backend returned a cookie named `jwt` on login.
+- If the UI looks broken or products are missing, ensure the backend is running and returning product pages (the frontend requests paginated data, default size 20).
+
+If you want, I can also add a short script to start backend + frontend together or a CONTRIBUTING note describing the seeded admin bean location in the backend code.
+
