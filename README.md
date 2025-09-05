@@ -4,7 +4,7 @@ A minimal README for people who clone this repo and want to run the app locally 
 
 Prerequisites
 - Node.js 18+ and npm (for the frontend)
-- Java 17+ and Maven (or use the included Maven wrapper) to run the backend
+- Java 21 and Maven (or use the included Maven wrapper) to run the backend
  - PostgreSQL database (backend uses PostgreSQL for persistence)
 
 Steps
