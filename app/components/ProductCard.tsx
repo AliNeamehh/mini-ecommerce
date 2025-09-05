@@ -30,7 +30,6 @@ export default function ProductCard({ product }: { product: Product }) {
           >
             Add to Cart
           </button>
-          <button className="button-primary w-36">Add to Cart</button>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useCart } from '../store/cart'
 import { isAuthed, clearToken } from '../lib/auth'
@@ -9,6 +9,11 @@ export default function Navbar() {
   const count = useCart((s) => s.count())
   const router = useRouter()
   const authed = isAuthed()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
   return (
     <header className="border-b bg-white">
       <div className="container flex items-center justify-between py-3">
@@ -16,7 +21,7 @@ export default function Navbar() {
           <Link href="/" className="brand">MiniShop</Link>
           <nav className="flex items-center gap-4 text-gray-700">
             <Link href="/">Shop</Link>
-            <Link href="/cart" className="relative">Cart <span className="ml-2 inline-block bg-blue-600 text-white px-2 rounded-full text-sm">{count}</span></Link>
+            <Link href="/cart" className="relative">Cart <span className="ml-2 inline-block bg-blue-600 text-white px-2 rounded-full text-sm">{mounted ? count : ''}</span></Link>
             <Link href="/admin" className="">Admin</Link>
           </nav>
         </div>
