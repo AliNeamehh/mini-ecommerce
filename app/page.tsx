@@ -20,7 +20,7 @@ export default function Page() {
       getProductsPage(p, size)
         .then((res) => {
           if (!mounted) return
-          // backend returns a Page object
+         
           const content = Array.isArray(res.content) ? res.content : []
           setProducts(content)
           setTotalPages(res.totalPages || 1)
@@ -35,7 +35,7 @@ export default function Page() {
     load()
 
     const onCreated = (e: any) => {
-      // jump to last page when new product created
+  
       const last = Math.max(0, totalPages - 1)
       load(last)
     }
@@ -73,9 +73,9 @@ export default function Page() {
   <p className="text-sm text-gray-600">Page {page + 1} of {totalPages} — Showing {products.length} results</p>
   {/* pagination controls shown after the product listing */}
 
-  <div ref={gridRef} className="mt-6 grid w-full gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div ref={gridRef} className="mt-6 w-full flex flex-wrap gap-4 items-start">
         {loading ? (
-          <div className="col-span-full text-center py-10 text-gray-500">Loading products...</div>
+          <div className="w-full text-center py-10 text-gray-500">Loading products...</div>
         ) : (
           products.map((p) => <ProductCard key={p.id} product={p} />)
         )}
