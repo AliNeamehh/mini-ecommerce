@@ -3,10 +3,24 @@ import jwt_decode from 'jwt-decode'
 
 export function setToken(token: string) {
   Cookies.set('jwt', token, { path: '/', sameSite: 'lax' })
+  try {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('auth-change', { detail: { authed: true } }))
+    }
+  } catch (e) {
+    // no-op
+  }
 }
 
 export function clearToken() {
   Cookies.remove('jwt', { path: '/' })
+  try {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('auth-change', { detail: { authed: false } }))
+    }
+  } catch (e) {
+    // no-op
+  }
 }
 
 type JwtPayload = { sub?: string; role?: string; username?: string; exp?: number }

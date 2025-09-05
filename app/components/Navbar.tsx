@@ -9,19 +9,37 @@ export default function Navbar() {
   const count = useCart((s) => s.count())
   const router = useRouter()
   const [authed, setAuthed] = useState(false)
+  const [role, setRole] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     // run only on client — keep server output deterministic (not authed)
     setMounted(true)
     try {
-      // lazy-check auth on mount
+      // lazy-check auth and role on mount
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const { isAuthed } = require('../lib/auth')
-      setAuthed(!!isAuthed())
+      const auth = require('../lib/auth')
+      setAuthed(!!auth.isAuthed())
+      setRole(auth.getRoleFromToken())
     } catch (e) {
       setAuthed(false)
+      setRole(null)
     }
+
+    // update when other parts of the app change auth (login/logout)
+    function onAuthChange(e: Event) {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const auth = require('../lib/auth')
+        setAuthed(!!auth.isAuthed())
+        setRole(auth.getRoleFromToken())
+      } catch (err) {
+        setAuthed(false)
+        setRole(null)
+      }
+    }
+    window.addEventListener('auth-change', onAuthChange)
+    return () => window.removeEventListener('auth-change', onAuthChange)
   }, [])
   return (
     <header className="border-b bg-white">
@@ -39,7 +57,10 @@ export default function Navbar() {
           {authed ? (
             <button
               onClick={() => {
+                // clear client token and update local state so UI reflects logout immediately
                 clearToken()
+                setAuthed(false)
+                setRole(null)
                 router.push('/')
               }}
             >

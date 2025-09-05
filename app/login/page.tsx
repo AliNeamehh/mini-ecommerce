@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from 'react'
 import { login } from '../lib/api'
-import { setToken, clearToken } from '../lib/auth'
+import { setToken, clearToken, getRoleFromToken } from '../lib/auth'
 import { useRouter } from 'next/navigation'
 import Button from '../components/ui/button'
 import Input from '../components/ui/input'
@@ -19,11 +19,21 @@ export default function LoginPage() {
       // Clear any existing jwt cookie (stale or malformed) before login
       clearToken()
       const r = await login({ email: username, password })
-  // login() now throws if token is invalid; still be defensive here
-  const token = typeof r === 'string' ? r : (r && (r as any).token) ? (r as any).token : ''
-  if (!token) throw new Error('Login failed (no token)')
-  setToken(token)
-  router.push('/')
+      // login() now throws if token is invalid; still be defensive here
+      const token = typeof r === 'string' ? r : (r && (r as any).token) ? (r as any).token : ''
+      if (!token) throw new Error('Login failed (no token)')
+      setToken(token)
+      // Redirect based on role: admins -> admin orders, others -> home
+      try {
+        const role = getRoleFromToken(token)
+        if (role === 'ADMIN') {
+          router.push('/admin/orders')
+        } else {
+          router.push('/')
+        }
+      } catch (e) {
+        router.push('/')
+      }
     } catch (err: any) {
       setError(err.message || 'Login failed')
     }
