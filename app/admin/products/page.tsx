@@ -33,7 +33,15 @@ export default function AdminProductsPage() {
 
     try {
       setIsSubmitting(true)
-      await createProduct(payload)
+      const created = await createProduct(payload)
+      // notify other parts of the app (shop) so they can refresh
+      try {
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('product-created', { detail: created }))
+        }
+      } catch (e) {
+        // ignore
+      }
       setName('')
       setPrice('')
       setStock('')

@@ -1,9 +1,28 @@
-import React from 'react'
+"use client"
+import React, { useEffect, useState } from 'react'
 import { getLowStock } from '../../lib/api'
 
-export default async function LowStockPage() {
-  const items = await getLowStock()
+export default function LowStockPage() {
+  const [items, setItems] = useState<any[] | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let mounted = true
+    setLoading(true)
+    getLowStock()
+      .then((r) => mounted && setItems(r))
+      .catch((e) => mounted && setError(e.message || 'Failed to load'))
+      .finally(() => mounted && setLoading(false))
+    return () => {
+      mounted = false
+    }
+  }, [])
+
+  if (loading) return <div className="card">Loading...</div>
+  if (error) return <div className="card text-red-600">{error}</div>
   if (!items || items.length === 0) return <div className="card">All good — no low stock</div>
+
   return (
     <div>
       <h1 className="text-2xl font-bold">Low stock</h1>

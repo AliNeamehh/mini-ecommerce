@@ -41,9 +41,9 @@ function friendlyError(e: any) {
   return new Error('Request failed')
 }
 
-export async function getProducts(): Promise<Product[]> {
+export async function getProducts(page = 0, size = 10): Promise<Product[]> {
   try {
-    const r = await instance.get('/products')
+    const r = await instance.get(`/products?page=${page}&size=${size}`)
     // backend returns a Page<T> object: { content: T[], ... }
     if (r.data && Array.isArray((r.data as any).content)) {
       return (r.data as any).content as Product[]

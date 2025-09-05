@@ -10,17 +10,30 @@ export default function Page() {
 
   useEffect(() => {
     let mounted = true
-    getProducts()
-      .then((p) => {
-        if (mounted) setProducts(p)
-      })
-      .catch(() => {
-        if (mounted) setProducts([])
-      })
-      .finally(() => mounted && setLoading(false))
+    const load = () => {
+      setLoading(true)
+      // request a larger page size so admin-created items show up
+      getProducts(0, 50)
+        .then((p) => {
+          if (mounted) setProducts(p)
+        })
+        .catch(() => {
+          if (mounted) setProducts([])
+        })
+        .finally(() => mounted && setLoading(false))
+    }
+
+    load()
+
+    const onCreated = (e: any) => {
+      // re-fetch when product created
+      load()
+    }
+    window.addEventListener('product-created', onCreated)
 
     return () => {
       mounted = false
+      window.removeEventListener('product-created', onCreated)
     }
   }, [])
 
