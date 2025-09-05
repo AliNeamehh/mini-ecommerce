@@ -51,27 +51,26 @@ export default function Page() {
     if (p < 0 || p >= totalPages) return
     ;(async () => {
       try {
-        setPage(p)
-        setLoading(true)
-        const res = await getProductsPage(p, size)
-        const content = Array.isArray(res.content) ? res.content : []
-        setProducts(content)
-        setTotalPages(res.totalPages || 1)
-        // scroll to the top of the product grid so user sees new items
-        if (gridRef.current) gridRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      } catch (err) {
-        setProducts([])
-      } finally {
-        setLoading(false)
-      }
-    })()
-  }
+        return (
+          <div className="pb-24">
+            <h1 className="text-2xl font-bold">Shop</h1>
+        <p className="text-sm text-gray-600">Page {page + 1} of {totalPages}  Showing {products.length} results</p>
 
-  return (
-    <div className="pb-24">
-      <h1 className="text-2xl font-bold">Shop</h1>
-  <p className="text-sm text-gray-600">Page {page + 1} of {totalPages} — Showing {products.length} results</p>
-  {/* pagination controls shown after the product listing */}
+            <div ref={gridRef} className="mt-6 w-full grid gap-4 justify-center" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))' }}>
+              {loading ? (
+                <div className="w-full text-center py-10 text-gray-500">Loading products...</div>
+              ) : (
+                products.map((p) => <ProductCard key={p.id} product={p} />)
+              )}
+            </div>
+
+            <div className="mt-6 mb-8 flex items-center justify-center gap-3 bg-white px-4 py-3 rounded-md shadow-sm">
+              <Button aria-label="Previous page" onClick={() => goto(page - 1)} disabled={page <= 0}>Prev</Button>
+              <div className="text-sm text-gray-600">Page {page + 1} of {totalPages}</div>
+              <Button aria-label="Next page" onClick={() => goto(page + 1)} disabled={page >= totalPages - 1}>Next</Button>
+            </div>
+          </div>
+        )
 
       <div ref={gridRef} className="mt-6 w-full flex flex-wrap gap-4 items-start">
         {loading ? (

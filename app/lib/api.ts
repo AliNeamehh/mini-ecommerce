@@ -74,7 +74,6 @@ export async function login(req: LoginRequest): Promise<{ token: string }> {
   
   
   
-  // Validate token looks like a JWT (three base64 parts separated by dots)
   if (!token || typeof token !== 'string' || token.split('.').length !== 3) {
     console.error('[api] login returned invalid token:', r.data)
     throw new Error('Invalid token received from server')

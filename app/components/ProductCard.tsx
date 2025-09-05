@@ -47,7 +47,6 @@ export default function ProductCard({ product }: { product: Product }) {
           <button
             onClick={() => {
               if (!isAuthed()) {
-                // not logged in -> send to login page
                 router.push('/login')
                 return
               }

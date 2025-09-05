@@ -22,13 +22,12 @@ export default function RegisterPage() {
     try {
       setError(null)
       await register({ name, email, password })
-      // Auto-login after successful registration
+      
       try {
         await login({ email, password })
         router.push('/')
         return
       } catch (loginErr: any) {
-        // If auto-login fails, fall back to the login page
         console.debug('Auto-login failed after register:', loginErr)
         router.push('/login')
         return

@@ -13,10 +13,8 @@ export default function Navbar() {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    // run only on client — keep server output deterministic (not authed)
     setMounted(true)
     try {
-      // lazy-check auth and role on mount
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const auth = require('../lib/auth')
       setAuthed(!!auth.isAuthed())
@@ -26,7 +24,6 @@ export default function Navbar() {
       setRole(null)
     }
 
-    // update when other parts of the app change auth (login/logout)
     function onAuthChange(e: Event) {
       try {
         // eslint-disable-next-line @typescript-eslint/no-var-requires

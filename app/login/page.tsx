@@ -16,14 +16,13 @@ export default function LoginPage() {
     e.preventDefault()
     try {
       setError(null)
-      // Clear any existing jwt cookie (stale or malformed) before login
-      clearToken()
+  clearToken()
       const r = await login({ email: username, password })
-      // login() now throws if token is invalid; still be defensive here
+  // login() now throws if token is invalid; still be defensive here
       const token = typeof r === 'string' ? r : (r && (r as any).token) ? (r as any).token : ''
       if (!token) throw new Error('Login failed (no token)')
       setToken(token)
-      // Redirect based on role: admins -> admin orders, others -> home
+      
       try {
         const role = getRoleFromToken(token)
         if (role === 'ADMIN') {
