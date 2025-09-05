@@ -84,3 +84,11 @@ NEXT_PUBLIC_API_BASE=http://localhost:8080
 
 Paste the block above into `app/.env.local` (or copy `app/.env.example`) and adjust values as needed.
 
+## Website Screenshots
+
+![Screenshot](images/Screenshot%20(433).png)
+![Screenshot](images/Screenshot%20(434).png)
+![Screenshot](images/Screenshot%20(435).png)
+![Screenshot](images/Screenshot%20(436).png)
+![Screenshot](images/Screenshot%20(439).png)
+
