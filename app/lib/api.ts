@@ -2,7 +2,7 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import { Product, CreateOrderRequest, LoginRequest, RegisterRequest, Order, AdminOrderRow } from './types'
 
-const baseURL = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8080'
+const baseURL = process.env.NEXT_PUBLIC_API_BASE || '/api'
 
 const instance = axios.create({
   baseURL,
