@@ -29,7 +29,7 @@ public class ProductController {
 
     @GetMapping
     @Operation(summary = "Get all products with pagination")
-    public ResponseEntity<Page<ProductResponseDto >>  getAllProducts(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<ProductResponseDto >>  getAllProducts(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "25") int size) {
         return ResponseEntity.ok(productService.getAllProducts(PageRequest.of(page, size)));
     }
 
