@@ -12,7 +12,6 @@ const instance = axios.create({
 })
 
 instance.interceptors.request.use((cfg) => {
-  // Only read cookies in the browser. On server-side rendering `js-cookie` will not work.
   let token: string | undefined
   try {
     if (typeof window !== 'undefined') {
@@ -23,14 +22,9 @@ instance.interceptors.request.use((cfg) => {
   }
 
   if (token) {
-    // debug: show what token we're attaching (safe for dev only)
-    // eslint-disable-next-line no-console
-    console.debug('[api] attaching token to request:', token ? `${token.substring(0, 8)}...` : token)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const h = (cfg.headers as any) || {}
     h['Authorization'] = `Bearer ${token}`
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    cfg.headers = h as any
+  cfg.headers = h as any
   }
   return cfg
 })
@@ -44,11 +38,11 @@ function friendlyError(e: any) {
 export async function getProducts(page = 0, size = 20): Promise<Product[]> {
   try {
     const r = await instance.get(`/products?page=${page}&size=${size}`)
-    // backend returns a Page<T> object: { content: T[], ... }
+    
     if (r.data && Array.isArray((r.data as any).content)) {
       return (r.data as any).content as Product[]
     }
-    // fallback if backend returns a plain array
+    
     if (Array.isArray(r.data)) return r.data as Product[]
     return []
   } catch (e) {
@@ -56,7 +50,6 @@ export async function getProducts(page = 0, size = 20): Promise<Product[]> {
   }
 }
 
-// Return the full Page<T> object from the backend including pagination metadata
 export async function getProductsPage(page = 0, size = 20): Promise<any> {
   try {
     const r = await instance.get(`/products?page=${page}&size=${size}`)
@@ -69,17 +62,20 @@ export async function getProductsPage(page = 0, size = 20): Promise<any> {
 export async function login(req: LoginRequest): Promise<{ token: string }> {
   try {
     const r = await instance.post('/auth/login', req)
-  // debug: log response for troubleshooting (dev only)
-  // eslint-disable-next-line no-console
   console.debug('[api] login response status=', r.status, 'data=', r.data)
-  // Backend may return a plain string token (not an object). Normalize
-  // to an object shape { token } so callers can safely call r.token.
+  
+  
   const token = typeof r.data === 'string' ? r.data : (r.data && r.data.token) ? r.data.token : undefined
-  // eslint-disable-next-line no-console
   console.debug('[api] extracted token=', token ? `${token.substring(0,8)}...` : token)
+  
+  
+  
+  
+  
+  
+  
   // Validate token looks like a JWT (three base64 parts separated by dots)
   if (!token || typeof token !== 'string' || token.split('.').length !== 3) {
-    // eslint-disable-next-line no-console
     console.error('[api] login returned invalid token:', r.data)
     throw new Error('Invalid token received from server')
   }

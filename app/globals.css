@@ -19,7 +19,7 @@
 }
 
 .card {
-  /* standard product card: column layout, left-aligned content */
+
   @apply rounded-2xl shadow-sm hover:shadow-md p-4 bg-white flex flex-col items-start text-left;
 }
 

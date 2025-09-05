@@ -23,7 +23,7 @@ export default function ProductCard({ product }: { product: Product }) {
           <div className="w-full h-full flex items-center justify-center text-gray-300">No image</div>
         )}
 
-        {/* Stock badge in the corner */}
+        
         <div className="absolute top-3 right-3">
           {out ? (
             <span className="inline-flex items-center px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-semibold">Out of Stock</span>
