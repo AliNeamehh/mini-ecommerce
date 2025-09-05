@@ -11,7 +11,16 @@ const instance = axios.create({
 })
 
 instance.interceptors.request.use((cfg) => {
-  const token = Cookies.get('jwt')
+  // Only read cookies in the browser. On server-side rendering `js-cookie` will not work.
+  let token: string | undefined
+  try {
+    if (typeof window !== 'undefined') {
+      token = Cookies.get('jwt')
+    }
+  } catch (e) {
+    token = undefined
+  }
+
   if (token) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const h = (cfg.headers as any) || {}
