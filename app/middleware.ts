@@ -12,7 +12,16 @@ export function middleware(req: NextRequest) {
     }
     try {
       const payload: any = jwt_decode(cookie.value)
-      if (!payload || payload.role !== 'ADMIN') {
+      // Accept either a single `role` claim or an array `roles` (e.g. ['ROLE_ADMIN'])
+      const isAdmin = (() => {
+        if (!payload) return false
+        if (payload.role && /admin/i.test(String(payload.role))) return true
+        if (Array.isArray(payload.roles) && payload.roles.length > 0) {
+          return payload.roles.some((r: string) => /admin/i.test(String(r)))
+        }
+        return false
+      })()
+      if (!isAdmin) {
         url.pathname = '/login'
         return NextResponse.redirect(url)
       }

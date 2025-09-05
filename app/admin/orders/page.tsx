@@ -1,48 +1,71 @@
-"use client"
-import React, { useEffect, useState } from 'react'
-import { getAdminOrders } from '../../lib/api'
+import React from 'react'
 
-export default function AdminOrdersPage() {
-  const [rows, setRows] = useState<any[] | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+type OrderItem = { name: string; quantity: number }
+type OrderRow = { id: number; createdAt: string; items: OrderItem[]; totalAmount: number }
 
-  useEffect(() => {
-    let mounted = true
-    getAdminOrders()
-      .then((r) => mounted && setRows(r))
-      .catch((e) => mounted && setError(e.message || 'Failed to load'))
-      .finally(() => mounted && setLoading(false))
-    return () => {
-      mounted = false
-    }
-  }, [])
+async function fetchOrders(cookieHeader?: string): Promise<OrderRow[]> {
+  const base = process.env.NEXT_PUBLIC_API_BASE || '/api'
+  const res = await fetch(`${base}/orders`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: cookieHeader ? { cookie: cookieHeader } : undefined,
+  })
+  if (!res.ok) throw new Error(`Failed to fetch orders: ${res.status}`)
+  const data = await res.json()
+  // assume backend returns array
+  return data as OrderRow[]
+}
 
-  if (loading) return <div className="card">Loading...</div>
-  if (error) return <div className="card text-red-600">{error}</div>
-  if (!rows || rows.length === 0) return <div className="card">No orders</div>
+export default async function AdminOrdersPage({ searchParams }: { searchParams?: { q?: string } }) {
+  // Server-side fetch so cookies are forwarded by Next automatically in production
+  const orders = await fetchOrders()
+
+  if (!orders || orders.length === 0) {
+    return <div className="card">No orders found</div>
+  }
+
+  // optional query filtering on server (by id)
+  const q = searchParams?.q?.trim() || ''
+  const filtered = q ? orders.filter((o) => String(o.id) === q) : orders
 
   return (
     <div>
       <h1 className="text-2xl font-bold">Orders</h1>
+      <div className="mt-3 mb-2">
+        <form method="GET" className="flex gap-2">
+          <input name="q" placeholder="Search by ID" defaultValue={q} className="input" />
+          <button className="btn">Search</button>
+        </form>
+      </div>
+
       <table className="w-full mt-4">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Created</th>
-            <th>User</th>
-            <th>Status</th>
-            <th>Total</th>
+            <th className="text-left">ID</th>
+            <th className="text-left">Created</th>
+            <th className="text-left">Items</th>
+            <th className="text-left">Total</th>
           </tr>
         </thead>
         <tbody>
-          {rows.map((r: any) => (
-            <tr key={r.id} className="border-t">
-              <td>{r.id}</td>
-              <td>{new Date(r.createdAt).toLocaleString()}</td>
-              <td>{r.userName}</td>
-              <td>{r.status}</td>
-              <td>${r.totalAmount.toFixed(2)}</td>
+          {filtered.map((r) => (
+            <tr key={r.id} className="border-t align-top">
+              <td className="py-2">{r.id}</td>
+              <td className="py-2">{new Date(r.createdAt).toLocaleString()}</td>
+              <td className="py-2">
+                <ul className="list-disc pl-5">
+                  {r.items && r.items.length > 0 ? (
+                    r.items.map((it, i) => (
+                      <li key={i}>
+                        {it.name} × {it.quantity}
+                      </li>
+                    ))
+                  ) : (
+                    <li>-</li>
+                  )}
+                </ul>
+              </td>
+              <td className="py-2">${(Number(r.totalAmount) || 0).toFixed(2)}</td>
             </tr>
           ))}
         </tbody>
