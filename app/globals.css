@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --container-padding: 1.5rem;
+}
+
+.container {
+  max-width: 72rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--container-padding);
+  padding-right: var(--container-padding);
+}
+
+.button-primary {
+  @apply bg-blue-600 text-white rounded-lg px-4 py-2 disabled:opacity-50 hover:bg-blue-700;
+}
+
+.card {
+  @apply rounded-2xl shadow-sm hover:shadow-md p-6 bg-white flex flex-col items-center text-center;
+}
+
+.badge-instock {
+  @apply bg-green-500 text-white px-3 py-1 rounded-md text-sm inline-block;
+}
+
+.brand {
+  @apply text-2xl font-bold text-blue-600;
+}
