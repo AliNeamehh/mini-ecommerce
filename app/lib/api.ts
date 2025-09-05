@@ -41,7 +41,7 @@ function friendlyError(e: any) {
   return new Error('Request failed')
 }
 
-export async function getProducts(page = 0, size = 10): Promise<Product[]> {
+export async function getProducts(page = 0, size = 20): Promise<Product[]> {
   try {
     const r = await instance.get(`/products?page=${page}&size=${size}`)
     // backend returns a Page<T> object: { content: T[], ... }
@@ -51,6 +51,16 @@ export async function getProducts(page = 0, size = 10): Promise<Product[]> {
     // fallback if backend returns a plain array
     if (Array.isArray(r.data)) return r.data as Product[]
     return []
+  } catch (e) {
+    throw friendlyError(e)
+  }
+}
+
+// Return the full Page<T> object from the backend including pagination metadata
+export async function getProductsPage(page = 0, size = 20): Promise<any> {
+  try {
+    const r = await instance.get(`/products?page=${page}&size=${size}`)
+    return r.data
   } catch (e) {
     throw friendlyError(e)
   }
