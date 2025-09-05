@@ -1,10 +1,27 @@
-import React from 'react'
+"use client"
+import React, { useEffect, useState } from 'react'
 import { isAuthed, clearToken } from '../lib/auth'
 import Cookies from 'js-cookie'
 
 export default function MyAccountPage() {
-  const token = Cookies.get('jwt')
-  if (!isAuthed()) {
+  const [authed, setAuthed] = useState(false)
+  const [payload, setPayload] = useState<any>(null)
+
+  useEffect(() => {
+    setAuthed(isAuthed())
+    try {
+      const token = Cookies.get('jwt')
+      if (token) {
+        const body = token.split('.')[1]
+        const json = body ? JSON.parse(atob(body)) : null
+        setPayload(json)
+      }
+    } catch (e) {
+      setPayload(null)
+    }
+  }, [])
+
+  if (!authed) {
     return (
       <div className="card">
         <h2 className="text-lg">Not signed in</h2>
@@ -12,8 +29,7 @@ export default function MyAccountPage() {
       </div>
     )
   }
-  let payload: any = null
-  try { payload = token ? JSON.parse(atob(token.split('.')[1])) : null } catch(e) { payload = null }
+
   return (
     <div className="card">
       <h2 className="text-lg">My account</h2>

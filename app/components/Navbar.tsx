@@ -8,11 +8,20 @@ import { useRouter } from 'next/navigation'
 export default function Navbar() {
   const count = useCart((s) => s.count())
   const router = useRouter()
-  const authed = isAuthed()
+  const [authed, setAuthed] = useState(false)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    // run only on client — keep server output deterministic (not authed)
     setMounted(true)
+    try {
+      // lazy-check auth on mount
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const { isAuthed } = require('../lib/auth')
+      setAuthed(!!isAuthed())
+    } catch (e) {
+      setAuthed(false)
+    }
   }, [])
   return (
     <header className="border-b bg-white">
